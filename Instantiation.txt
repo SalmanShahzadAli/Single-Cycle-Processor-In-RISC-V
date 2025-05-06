@@ -1,0 +1,25 @@
+// All Modules are Instantiated here...
+module top(clk,reset);
+input clk,reset;
+
+wire [31:0] PC_top,instruction_top;
+// Program Counter 
+Program_Counter PC(.clk(clk),.reset(reset),.PC_in(),.PC_out(PC_top));
+
+// PC Adder
+PCplus4 PC_Adder(.fromPC(PC_top),.NextoPC());
+
+// Instruction_Memory 
+Instruction_Memory Inst_Memory(.clk(clk),.reset(reset),.read_address(PC_top),.instruction_out(instruction_top));
+
+// Register_File
+Reg_File Reg_File(.clk(),.reset(),.RegWrite(),.Rs1(instruction_top[19:15]),.Rs2(instruction_top[24:20]),.Rd(instruction_top[11:7]),.Write_data(),.read_data1(),.read_data2());
+
+// Immediate Generator
+ImmGen  ImmGen(.Opcode(),.instruction(),.ImmExt());
+
+// Control Unit 
+Control_unit Control_unit(.instruction(),.Branch(),.MemRead(),.MemtoReg(),.ALUOp(),.MemWrite(),.ALUSrc(),.RegWrite());
+
+
+endmodule;
